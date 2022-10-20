@@ -88,9 +88,11 @@ class ContentDispositionHeader(
     return result
   }
 
-  override fun toString(): String {
-    return "ContentDispositionHeader(parameters=$parameters, dispositionType='$dispositionType')"
-  }
+  /**
+   * Converts this header into the string equivalent as defined by
+   * [RFC 6266 Section 4.1](https://www.rfc-editor.org/rfc/rfc6266#section-4.1).
+   */
+  override fun toString(): String = toHeaderString()
 
   companion object {
 
@@ -107,6 +109,8 @@ class ContentDispositionHeader(
     /**
      * Parses a Content Disposition header from the provided string based on
      * [RFC 6266 Section 4.1](https://www.rfc-editor.org/rfc/rfc6266#section-4.1).
+     *
+     * @throws ProcessingException if it fails to parse the provided string
      */
     @JvmStatic
     fun parse(str: String) = ContentDispositionHeaderParser().parse(str)

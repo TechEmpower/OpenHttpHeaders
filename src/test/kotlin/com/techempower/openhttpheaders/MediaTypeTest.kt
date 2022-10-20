@@ -17,7 +17,7 @@ class MediaTypeTest : FunSpec({
     context("without parameter matching") {
       withData(
           nameFn = {
-            "${it.namePrefix ?: ""}${it.a.toMimeString()}, ${it.b.toMimeString()}, matches: ${it.matches}"
+            "${it.namePrefix ?: ""}${it.a}, ${it.b}, matches: ${it.matches}"
           },
           listOf(
               // Perfect match
@@ -105,7 +105,7 @@ class MediaTypeTest : FunSpec({
     context("with parameter matching") {
       withData(
           nameFn = {
-            "${it.a.toMimeString()}, ${it.b.toMimeString()}, matches: ${it.matches}"
+            "${it.a}, ${it.b}, matches: ${it.matches}"
           },
           listOf(
               TestCase(
@@ -284,7 +284,7 @@ class MediaTypeTest : FunSpec({
       }
     }
   }
-  context("compareTo") {
+  context("QUALITY_VALUE_COMPARATOR") {
     data class TestCase(
         val name: String,
         val list: List<MediaType>,
@@ -438,10 +438,11 @@ class MediaTypeTest : FunSpec({
             )
         )
     ) {
-      it.list.sorted() shouldBe it.expected
+      it.list.sortedWith(MediaType.QUALITY_VALUE_COMPARATOR) shouldBe it.expected
       // Shuffle a few times to guarantee it works in all directions
       for (ignored in 1..10) {
-        it.list.shuffled().sorted() shouldBe it.expected
+        it.list.shuffled()
+            .sortedWith(MediaType.QUALITY_VALUE_COMPARATOR) shouldBe it.expected
       }
     }
   }

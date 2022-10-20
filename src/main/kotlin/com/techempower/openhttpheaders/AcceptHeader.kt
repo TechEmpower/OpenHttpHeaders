@@ -11,6 +11,8 @@ class AcceptHeader(val mediaTypes: List<MediaType>) {
     /**
      * Parses an Accept header from the provided string based on
      * [RFC 7231 Section 5.3.2](https://www.rfc-editor.org/rfc/rfc7231#section-5.3.2).
+     *
+     * @throws ProcessingException if it fails to parse the provided string
      */
     @JvmStatic
     @JvmOverloads
@@ -48,9 +50,12 @@ class AcceptHeader(val mediaTypes: List<MediaType>) {
     return mediaTypes.hashCode()
   }
 
-  override fun toString(): String {
-    return "AcceptHeader(mediaTypes=$mediaTypes)"
-  }
+  /**
+   * Converts this Accept header into the string equivalent as defined by
+   * [RFC 7231 Section 5.3.2](https://www.rfc-editor.org/rfc/rfc7231#section-5.3.2),
+   * and by extension, [RFC 7231 Section 3.1.1.1](https://www.rfc-editor.org/rfc/rfc7231#section-3.1.1.1).
+   */
+  override fun toString(): String = toHeaderString()
 }
 
 @JvmSynthetic
@@ -82,6 +87,10 @@ abstract class AcceptHeaderDsl {
 
   /**
    * Adds the provided media type to the Accept header
+   *
+   *
+   * @throws ProcessingException if the `quality` (if provided) is less than 0,
+   * greater than 1000, or has more than 3 digits after the decimal
    */
   fun mediaType(
       type: String,
