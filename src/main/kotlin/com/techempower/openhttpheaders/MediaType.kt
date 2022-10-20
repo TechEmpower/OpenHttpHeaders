@@ -165,6 +165,7 @@ class MediaType(
      *        - Note: Parameter values are not considered case-insensitive per the spec.
      */
     val QUALITY_VALUE_COMPARATOR = Comparator<MediaType> { o1, o2 ->
+      // Note: Largely based on https://github.com/spring-projects/spring-framework/blob/f93fda2a95d58dc52d14fedc11dc820017e0d8ee/spring-core/src/main/java/org/springframework/util/MimeType.java#L534-L592
       if (o1.quality == null && o2.quality != null) {
         return@Comparator -1
       }
@@ -183,6 +184,7 @@ class MediaType(
       if (valueCompare != 0) {
         return@Comparator valueCompare
       }
+      // TODO: Optimize
       val ownKeys = TreeSet(CASE_INSENSITIVE_ORDER)
       val o2Keys = TreeSet(CASE_INSENSITIVE_ORDER)
       ownKeys.addAll(o1.parameters.keys)
