@@ -69,7 +69,7 @@ internal class ContentDispositionHeaderParser {
       val quotedString = """(?:"(?<$QuotedValue>(?:$quotedPair|$qdText)*)")"""
       // language=regexp
       val tokenThenValue =
-        "(?:(?<$KEY>$token)$ows=$ows(?:(?<$VALUE>$token)|$quotedString))"
+          "(?:(?<$KEY>$token)$ows=$ows(?:(?<$VALUE>$token)|$quotedString))"
       // language=regexp
       val mimeCharsetCharacterRange = "[-a-zA-Z0-9!#$%&+^_`{}~]"
 
@@ -104,42 +104,42 @@ internal class ContentDispositionHeaderParser {
       val extension = "(?:$singleton(?:-$alphanum{2,8})+)"
       // language=regexp
       val langTag =
-        "(?:$language(?:-$script)?(?:-$region)?(?:-$variant)*(?:-$extension)*(?:-$privateUse)?)"
+          "(?:$language(?:-$script)?(?:-$region)?(?:-$variant)*(?:-$extension)*(?:-$privateUse)?)"
 
       // language=regexp
       val irregular = "(?:${
         listOf(
-          "en-GB-oed",
-          "i-ami",
-          "i-bnn",
-          "i-default",
-          "i-enochian",
-          "i-hak",
-          "i-klingon",
-          "i-lux",
-          "i-mingo",
-          "i-navajo",
-          "i-pwn",
-          "i-tao",
-          "i-tay",
-          "i-tsu",
-          "sgn-BE-FR",
-          "sgn-BE-NL",
-          "sgn-CH-DE",
+            "en-GB-oed",
+            "i-ami",
+            "i-bnn",
+            "i-default",
+            "i-enochian",
+            "i-hak",
+            "i-klingon",
+            "i-lux",
+            "i-mingo",
+            "i-navajo",
+            "i-pwn",
+            "i-tao",
+            "i-tay",
+            "i-tsu",
+            "sgn-BE-FR",
+            "sgn-BE-NL",
+            "sgn-CH-DE",
         ).joinToString("|")
       })"
       // language=regexp
       val regular = "(?:${
         listOf(
-          "art-lojban",
-          "cel-gaulish",
-          "no-bok",
-          "no-nyn",
-          "zh-guoyu",
-          "zh-hakka",
-          "zh-min",
-          "zh-min-nan",
-          "zh-xiang",
+            "art-lojban",
+            "cel-gaulish",
+            "no-bok",
+            "no-nyn",
+            "zh-guoyu",
+            "zh-hakka",
+            "zh-min",
+            "zh-min-nan",
+            "zh-xiang",
         ).joinToString("|")
       })"
       // language=regexp
@@ -156,10 +156,10 @@ internal class ContentDispositionHeaderParser {
       // Note that ' is not defined to be a separator, so ows is not allowed surrounding it
       // language=regexp
       val extValue =
-        "(?<$CHARSET>$mimeCharsetCharacterRange+)'(?<$LANGUAGE>$languageTag)?'(?<$ExtValueChars>(?:$percentEncoded|$attrChar)*)"
+          "(?<$CHARSET>$mimeCharsetCharacterRange+)'(?<$LANGUAGE>$languageTag)?'(?<$ExtValueChars>(?:$percentEncoded|$attrChar)*)"
       // language=regexp
       val extTokenThenExtValue =
-        """(?:(?:(?<$ExtKey>$token)\*)$ows=$ows(?:$extValue))"""
+          """(?:(?:(?<$ExtKey>$token)\*)$ows=$ows(?:$extValue))"""
 
       TYPE_REGEX = Regex("^(?<$TYPE>$token)")
       // Note: extTokenThenExtValue MUST be captured first otherwise it will
@@ -172,22 +172,22 @@ internal class ContentDispositionHeaderParser {
       // from being a standard key-value token, and for that reason this
       // implementation does not make any assumptions.
       DISPOSITION_PARAM_REGEX =
-        Regex("$ows;$ows(?:$extTokenThenExtValue|$tokenThenValue)")
+          Regex("$ows;$ows(?:$extTokenThenExtValue|$tokenThenValue)")
       UNESCAPE = Regex(quotedPair)
     }
   }
 
   fun parse(headerStr: String): ContentDispositionHeader {
     val typeMatchResult = TYPE_REGEX.find(headerStr)
-      ?: throw ProcessingException(
-        "Could not fully parse content disposition \"$headerStr\"," +
-            " parsed up to position 0."
-      )
+        ?: throw ProcessingException(
+            "Could not fully parse content disposition \"$headerStr\"," +
+                " parsed up to position 0."
+        )
     val builder =
-      ContentDispositionHeader.builder(typeMatchResult.groups[TYPE]!!.value)
+        ContentDispositionHeader.builder(typeMatchResult.groups[TYPE]!!.value)
     var parseIndex = typeMatchResult.range.last + 1
     for (dispositionParamMatchResult in DISPOSITION_PARAM_REGEX.findAll(
-      headerStr, startIndex = parseIndex
+        headerStr, startIndex = parseIndex
     )) {
       val key = dispositionParamMatchResult.groups[KEY]?.value
       val value = dispositionParamMatchResult.groups[VALUE]?.value
@@ -196,7 +196,7 @@ internal class ContentDispositionHeaderParser {
       val charsetStr = dispositionParamMatchResult.groups[CHARSET]?.value
       val language = dispositionParamMatchResult.groups[LANGUAGE]?.value
       val extValueChars =
-        dispositionParamMatchResult.groups[ExtValueChars]?.value
+          dispositionParamMatchResult.groups[ExtValueChars]?.value
       if (key != null) {
         val providedValue = value ?: UNESCAPE.replace(quotedValue!!, "$1")
         builder.addParameter(key to providedValue)
@@ -204,27 +204,27 @@ internal class ContentDispositionHeaderParser {
         val charset = Charset.forName(charsetStr)
         val extValue = URLDecoder.decode(extValueChars, charsetStr)
         builder.addParameter(
-          extKey to extValue,
-          charset = charset,
-          lang = language,
-          explicitExt = true
+            extKey to extValue,
+            charset = charset,
+            lang = language,
+            explicitExt = true
         )
       } else {
         throw ProcessingException(
-          "Could not fully parse content disposition \"$headerStr\"," +
-              " parsed up to position ${dispositionParamMatchResult.range.first}."
+            "Could not fully parse content disposition \"$headerStr\"," +
+                " parsed up to position ${dispositionParamMatchResult.range.first}."
         )
       }
       parseIndex = dispositionParamMatchResult.range.last + 1
     }
     if (parseIndex != headerStr.length) {
       throw ProcessingException(
-        "Could not fully parse content disposition \"$headerStr\"," +
-            " parsed up to position $parseIndex (${
-              headerStr.substring(
-                parseIndex
-              )
-            })"
+          "Could not fully parse content disposition \"$headerStr\"," +
+              " parsed up to position $parseIndex (${
+                headerStr.substring(
+                    parseIndex
+                )
+              })"
       )
     }
     return builder.build()

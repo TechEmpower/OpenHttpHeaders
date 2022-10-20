@@ -15,12 +15,13 @@ class AcceptHeader(val mediaTypes: List<MediaType>) {
     @JvmStatic
     @JvmOverloads
     fun parse(
-      mediaTypes: String,
-      qValueKey: String = "q"): AcceptHeader {
+        mediaTypes: String,
+        qValueKey: String = "q"
+    ): AcceptHeader {
       return AcceptHeader(
-        mediaTypes = MediaTypeParser(qValueKey).parse(
-          mediaTypes
-        )
+          mediaTypes = MediaTypeParser(qValueKey).parse(
+              mediaTypes
+          )
       )
     }
   }
@@ -32,7 +33,7 @@ class AcceptHeader(val mediaTypes: List<MediaType>) {
    */
   @JvmOverloads
   fun toHeaderString(qValueKey: String = "q") =
-    mediaTypes.joinToString(",") { it.toMimeString(qValueKey) }
+      mediaTypes.joinToString(",") { it.toMimeString(qValueKey) }
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -54,10 +55,9 @@ class AcceptHeader(val mediaTypes: List<MediaType>) {
 
 @JvmSynthetic
 fun acceptHeader(init: AcceptHeaderDsl.() -> Unit) =
-  AcceptHeaderDslImpl()
-    .also(init)
-    .toHeader()
-
+    AcceptHeaderDslImpl()
+        .also(init)
+        .toHeader()
 
 
 class AcceptHeaderBuilder {
@@ -84,9 +84,10 @@ abstract class AcceptHeaderDsl {
    * Adds the provided media type to the Accept header
    */
   fun mediaType(
-    type: String,
-    subtype: String,
-    init: MediaTypeDsl.() -> Unit = {}) {
+      type: String,
+      subtype: String,
+      init: MediaTypeDsl.() -> Unit = {}
+  ) {
     mediaType(MediaTypeDslImpl(type, subtype).also(init).toMediaType())
   }
 }

@@ -18,10 +18,11 @@ private fun quoteIfNecessary(str: String): String {
  * Media Types are defined per the spec, [RFC 7231 Section 3.1.1.1](https://www.rfc-editor.org/rfc/rfc7231#section-3.1.1.1).
  */
 class MediaType(
-  type: String,
-  subtype: String,
-  parameters: Map<String, String> = mapOf(),
-  val quality: Double? = null) : Comparable<MediaType> {
+    type: String,
+    subtype: String,
+    parameters: Map<String, String> = mapOf(),
+    val quality: Double? = null
+) : Comparable<MediaType> {
   val type: String
   val subtype: String
   val parameters: Map<String, String>
@@ -30,7 +31,7 @@ class MediaType(
     this.type = type.lowercase()
     this.subtype = subtype.lowercase()
     this.parameters =
-      parameters.entries.associate { it.key.lowercase() to it.value }
+        parameters.entries.associate { it.key.lowercase() to it.value }
     if (quality != null) {
       if (quality > 1 || quality < 0) {
         throw ProcessingException("Invalid quality, must be between 0 and 1000, inclusive: $quality")
@@ -54,17 +55,17 @@ class MediaType(
   fun toMimeString(qValueKey: String = "q"): String {
     val qualityDecimal: String? = quality?.toString()
     val qualitySuffix =
-      if (qualityDecimal != null) "$qValueKey=$qualityDecimal" else ""
+        if (qualityDecimal != null) "$qValueKey=$qualityDecimal" else ""
     val parametersString = parameters
-      .map { "${it.key}=${quoteIfNecessary(it.value)}" }
-      .joinToString(";")
+        .map { "${it.key}=${quoteIfNecessary(it.value)}" }
+        .joinToString(";")
     return listOf(
-      "$type/$subtype",
-      parametersString,
-      qualitySuffix
+        "$type/$subtype",
+        parametersString,
+        qualitySuffix
     )
-      .filter { it.isNotBlank() }
-      .joinToString(";")
+        .filter { it.isNotBlank() }
+        .joinToString(";")
   }
 
   /**
@@ -88,8 +89,9 @@ class MediaType(
    * @return `true` if both media types match
    */
   fun matches(
-    mediaType: MediaType,
-    checkParameters: Boolean = false): Boolean {
+      mediaType: MediaType,
+      checkParameters: Boolean = false
+  ): Boolean {
     val typesMatch = (type.equals(mediaType.type, ignoreCase = true) &&
         (subtype.equals(mediaType.subtype, ignoreCase = true)
             || subtype == WILDCARD
@@ -161,7 +163,7 @@ class MediaType(
         return keyCompare
       }
       val keyValueCompare =
-        compareValues(parameters[ownKey], other.parameters[otherKey])
+          compareValues(parameters[ownKey], other.parameters[otherKey])
       if (keyValueCompare != 0) {
         return keyValueCompare
       }
@@ -205,13 +207,14 @@ class MediaType(
 
     @JvmStatic
     fun builder(type: String, subtype: String) =
-      MediaTypeBuilder(type, subtype)
+        MediaTypeBuilder(type, subtype)
   }
 }
 
 class MediaTypeBuilder(
-  private val type: String,
-  private val subtype: String) {
+    private val type: String,
+    private val subtype: String
+) {
   private var parameters: MutableMap<String, String> = mutableMapOf()
   private var quality: Double? = null
 
@@ -242,16 +245,17 @@ class MediaTypeBuilder(
   }
 
   fun build() = MediaType(
-    type = type,
-    subtype = subtype,
-    parameters = parameters,
-    quality = quality
+      type = type,
+      subtype = subtype,
+      parameters = parameters,
+      quality = quality
   )
 }
 
 abstract class MediaTypeDsl(
-  val type: String,
-  val subtype: String) {
+    val type: String,
+    val subtype: String
+) {
   var parameters: MutableMap<String, String> = LinkedHashMap()
 
   /**
@@ -275,11 +279,11 @@ abstract class MediaTypeDsl(
 }
 
 internal class MediaTypeDslImpl(type: String, subtype: String) :
-  MediaTypeDsl(type, subtype) {
+    MediaTypeDsl(type, subtype) {
   fun toMediaType() = MediaType(
-    type = type,
-    subtype = subtype,
-    parameters = parameters.toMap(),
-    quality = quality
+      type = type,
+      subtype = subtype,
+      parameters = parameters.toMap(),
+      quality = quality
   )
 }
