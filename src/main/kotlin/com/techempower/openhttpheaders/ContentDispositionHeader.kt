@@ -62,6 +62,60 @@ class ContentDispositionHeader(
   fun getFilename(): String? = getParameter(FILENAME_KEY)?.value
 
   /**
+   * Returns a new ContentDispositionHeader with the provided filename-value
+   * pair added to the Content Disposition's parameters. If `charset` is
+   * anything other than [Charsets.ISO_8859_1], the value is encoded in the ext
+   * format, and provided as `filename*=ext-value`. Lang may optionally be
+   * provided, and if present will also cause the use of the ext format.
+   */
+  @JvmOverloads
+  fun filename(
+      value: String,
+      charset: Charset = Charsets.ISO_8859_1,
+      lang: String? = null
+  ): ContentDispositionHeader {
+    return addParameter(FILENAME_KEY to value, charset, lang)
+  }
+
+  /**
+   * Returns a new ContentDispositionHeader with the provided key-value
+   * pair added to the Content Disposition's parameters. If `charset` is
+   * anything other than [Charsets.ISO_8859_1], the value is encoded in the ext
+   * format, and provided as `filename*=ext-value`. Lang may optionally be
+   * provided, and if present will also cause the use of the ext format.
+   */
+  @JvmOverloads
+  fun addParameter(
+      key: String,
+      value: String,
+      charset: Charset = Charsets.ISO_8859_1,
+      lang: String? = null
+  ): ContentDispositionHeader {
+    return addParameter(key to value, charset, lang)
+  }
+
+  /**
+   * Returns a new ContentDispositionHeader with the provided key-value
+   * pair added to the Content Disposition's parameters. If `charset` is
+   * anything other than [Charsets.ISO_8859_1], the value is encoded in the ext
+   * format, and provided as `filename*=ext-value`. Lang may optionally be
+   * provided, and if present will also cause the use of the ext format.
+   */
+  @JvmSynthetic
+  fun addParameter(
+      parameter: Pair<String, String>,
+      charset: Charset = Charsets.ISO_8859_1,
+      lang: String? = null
+  ): ContentDispositionHeader {
+    val newParams = parameters.toMutableList()
+    newParams.add(Parameter(parameter.first, parameter.second, charset, lang, false))
+    return ContentDispositionHeader(
+        dispositionType = dispositionType,
+        parameters = newParams
+    )
+  }
+
+  /**
    * Converts this header into the string equivalent as defined by
    * [RFC 6266 Section 4.1](https://www.rfc-editor.org/rfc/rfc6266#section-4.1).
    */
@@ -105,6 +159,18 @@ class ContentDispositionHeader(
     fun builder(dispositionType: String): ContentDispositionHeaderBuilder {
       return ContentDispositionHeaderBuilder(dispositionType)
     }
+
+    /**
+     * Creates a new ContentDispositionHeader with the given disposition type.
+     */
+    @JvmStatic
+    fun of(dispositionType: String) = ContentDispositionHeader(dispositionType)
+
+    /**
+     * Creates a new ContentDispositionHeader with the given disposition type.
+     */
+    @JvmStatic
+    fun of(dispositionType: DispositionType) = ContentDispositionHeader(dispositionType.value)
 
     /**
      * Parses a Content Disposition header from the provided string based on
@@ -219,6 +285,7 @@ class ContentDispositionHeaderBuilder(private val dispositionType: String) {
    * Lang may optionally be provided, and if present will also cause the use of
    * the ext format.
    */
+  @JvmOverloads
   fun filename(
       value: String,
       charset: Charset = Charsets.ISO_8859_1,

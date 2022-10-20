@@ -446,4 +446,30 @@ class MediaTypeTest : FunSpec({
       }
     }
   }
+  context("of/with chains") {
+    test("should work correctly") {
+      MediaType.of("text", "html") shouldBe MediaType(
+          type = "text",
+          subtype = "html"
+      )
+      MediaType.of("text", "html")
+          .addParameter("charset", "utf-8") shouldBe MediaType(
+          type = "text",
+          subtype = "html",
+          parameters = mapOf(
+              "charset" to "utf-8"
+          )
+      )
+      MediaType.of("text", "html")
+          .addParameter("charset", "utf-8")
+          .quality(0.5) shouldBe MediaType(
+          type = "text",
+          subtype = "html",
+          parameters = mapOf(
+              "charset" to "utf-8"
+          ),
+          quality = 0.5
+      )
+    }
+  }
 })

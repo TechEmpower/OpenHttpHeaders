@@ -186,4 +186,23 @@ class AcceptHeaderTest : FunSpec({
       }
     }
   }
+  context("of/with chains") {
+    test("should work correctly") {
+      AcceptHeader.of(
+          MediaType.of("text", "html")
+      ) shouldBe AcceptHeader(
+          listOf(
+              MediaType.of("text", "html")
+          )
+      )
+      AcceptHeader.of(
+          MediaType.of("text", "html")
+      ).addMediaType(MediaType.of("text", "xml")) shouldBe AcceptHeader(
+          listOf(
+              MediaType.of("text", "html"),
+              MediaType.of("text", "xml")
+          )
+      )
+    }
+  }
 })

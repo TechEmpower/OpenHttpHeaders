@@ -9,6 +9,18 @@ class AcceptHeader(val mediaTypes: List<MediaType>) {
     fun builder() = AcceptHeaderBuilder()
 
     /**
+     * Creates a new AcceptHeader with the given media types.
+     */
+    @JvmStatic
+    fun of(mediaType: MediaType, vararg mediaTypes: MediaType) = AcceptHeader(mediaTypes = (listOf(mediaType) + mediaTypes).toList())
+
+    /**
+     * Creates a new AcceptHeader with the given media types.
+     */
+    @JvmStatic
+    fun of(mediaTypes: List<MediaType>) = AcceptHeader(mediaTypes = mediaTypes)
+
+    /**
      * Parses an Accept header from the provided string based on
      * [RFC 7231 Section 5.3.2](https://www.rfc-editor.org/rfc/rfc7231#section-5.3.2).
      *
@@ -27,6 +39,11 @@ class AcceptHeader(val mediaTypes: List<MediaType>) {
       )
     }
   }
+
+  /**
+   * Returns a new Accept header with the provided media type added.
+   */
+  fun addMediaType(mediaType: MediaType) = AcceptHeader(mediaTypes + mediaType)
 
   /**
    * Converts this Accept header into the string equivalent as defined by

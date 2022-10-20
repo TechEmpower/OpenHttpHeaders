@@ -38,7 +38,16 @@ AcceptHeader.builder()
     )
     .build()
     .toHeaderString()
-// This produces "text/xml;charset=utf-8;q=0.5,text/html"
+
+// or
+
+AcceptHeader.of(
+    MediaType.of("text", "xml")
+        .addParameter("charset", "utf-8")
+        .quality(0.5)
+).toHeaderString()
+
+// These both produce "text/xml;charset=utf-8;q=0.5,text/html"
 ```
 
 To parse an Accept header, in both languages, call:

@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEqualIgnoringCase
+import java.nio.charset.Charset
 
 // TODO: https://www.baeldung.com/kotlin/kotest#10-test-coverage
 
@@ -308,6 +309,55 @@ class ContentDispositionHeaderTest : FunSpec({
       ) {
         it.header.getFilename() shouldBe standardFilename
       }
+    }
+  }
+  context("of/with chains") {
+    test("should work correctly") {
+      ContentDispositionHeader.of(DispositionType.ATTACHMENT) shouldBe ContentDispositionHeader(
+          dispositionType = "attachment"
+      )
+      ContentDispositionHeader.of("test") shouldBe ContentDispositionHeader(
+          dispositionType = "test"
+      )
+      ContentDispositionHeader.of(DispositionType.ATTACHMENT)
+          .addParameter("test" to "value", Charsets.UTF_8, lang = "en") shouldBe ContentDispositionHeader(
+          dispositionType = "attachment",
+          parameters = listOf(
+              ContentDispositionHeader.Parameter(
+                  key = "test",
+                  value = "value",
+                  charset = Charsets.UTF_8,
+                  lang = "en",
+                  explicitExt = false
+              )
+          )
+      )
+      ContentDispositionHeader.of(DispositionType.ATTACHMENT)
+          .addParameter("test", "value", Charsets.UTF_8, lang = "en") shouldBe ContentDispositionHeader(
+          dispositionType = "attachment",
+          parameters = listOf(
+              ContentDispositionHeader.Parameter(
+                  key = "test",
+                  value = "value",
+                  charset = Charsets.UTF_8,
+                  lang = "en",
+                  explicitExt = false
+              )
+          )
+      )
+      ContentDispositionHeader.of(DispositionType.ATTACHMENT)
+          .filename("file.txt", Charsets.UTF_8, lang = "en") shouldBe ContentDispositionHeader(
+          dispositionType = "attachment",
+          parameters = listOf(
+              ContentDispositionHeader.Parameter(
+                  key = "filename",
+                  value = "file.txt",
+                  charset = Charsets.UTF_8,
+                  lang = "en",
+                  explicitExt = false
+              )
+          )
+      )
     }
   }
 })

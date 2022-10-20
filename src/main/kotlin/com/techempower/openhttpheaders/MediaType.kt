@@ -49,6 +49,39 @@ class MediaType(
   }
 
   /**
+   * Returns a new MediaType with the provided key-value pair added to the
+   * media type's parameters.
+   */
+  fun addParameter(key: String, value: String) = addParameters(key to value)
+
+  /**
+   * Returns a new MediaType with the provided key-value pairs added to the
+   * media type's parameters.
+   */
+  @JvmSynthetic
+  fun addParameters(vararg entries: Pair<String, String>): MediaType {
+    val newParams = parameters.toMutableMap()
+    newParams.putAll(entries)
+    return MediaType(
+        type = type,
+        subtype = subtype,
+        parameters = newParams,
+        quality = quality
+    )
+  }
+
+  /**
+   * Returns a new MediaType with the quality value for the media type set to
+   * the provided value, or resets it if the provided value is `null`.
+   */
+  fun quality(quality: Double?) = MediaType(
+      type = type,
+      subtype = subtype,
+      parameters = parameters,
+      quality = quality
+  )
+
+  /**
    * Converts this media type into the string equivalent as defined by
    * [RFC 7231 Section 3.1.1.1](https://www.rfc-editor.org/rfc/rfc7231#section-3.1.1.1).
    *
@@ -212,6 +245,12 @@ class MediaType(
     @JvmStatic
     fun builder(type: String, subtype: String) =
         MediaTypeBuilder(type, subtype)
+
+    /**
+     * Creates a new MediaType with the given type and subtype.
+     */
+    @JvmStatic
+    fun of(type: String, subtype: String) = MediaType(type, subtype)
 
     /**
      * Parses an MediaType from the provided string based on
