@@ -33,11 +33,11 @@ internal class MediaTypeParser(private val qValueKey: String) {
       FULL_TOKEN_REGEX = Regex("^$token$")
       val obsTextRange = "\\x80-\\xFF"
       val qdText =
-        "[\t \\x21\\x23-\\x5B\\x5D-\\x7E$obsTextRange]"
+          "[\t \\x21\\x23-\\x5B\\x5D-\\x7E$obsTextRange]"
       val quotedPair =
-        "\\\\([\t $vCharRange$obsTextRange])"
+          "\\\\([\t $vCharRange$obsTextRange])"
       val quotedStr =
-        "\"(?<$QUOTED_VALUE>(?:$qdText|$quotedPair)*)\""
+          "\"(?<$QUOTED_VALUE>(?:$qdText|$quotedPair)*)\""
       val ows = "[ \t]*"
 
       // Group 1: key
@@ -45,14 +45,14 @@ internal class MediaTypeParser(private val qValueKey: String) {
       // Group 3: quoted value
       // The final non-capture group IS necessary, ignore the warnings to the contrary
       PARAMETERS_REGEX = Regex(
-        "$ows;$ows(?<$KEY>$token)=(?:(?<$VALUE>$token)|(?:$quotedStr))"
+          "$ows;$ows(?<$KEY>$token)=(?:(?<$VALUE>$token)|(?:$quotedStr))"
       )
 
       // Group 1: type
       // Group 2: subtype
       // Group 3: parameters
       MEDIA_TYPE_REGEX = Regex(
-        ",?$ows(?<$TYPE>$token)/(?<$SUBTYPE>$token)(?<$PARAMETERS>(${PARAMETERS_REGEX.pattern})*)"
+          ",?$ows(?<$TYPE>$token)/(?<$SUBTYPE>$token)(?<$PARAMETERS>(${PARAMETERS_REGEX.pattern})*)"
       )
 
       UNESCAPE = Regex(quotedPair)
@@ -65,8 +65,8 @@ internal class MediaTypeParser(private val qValueKey: String) {
     // is invalid for the first match.
     if (mediaType[0] == ',') {
       throw ProcessingException(
-        "Could not fully parse media type \"$mediaType\"," +
-            " parsed up to position 0."
+          "Could not fully parse media type \"$mediaType\"," +
+              " parsed up to position 0."
       )
     }
     val mediaTypeMatches = MEDIA_TYPE_REGEX.findAll(mediaType)
@@ -75,8 +75,8 @@ internal class MediaTypeParser(private val qValueKey: String) {
     for (mediaTypeMatchResult in mediaTypeMatches) {
       if (mediaTypeEnd != mediaTypeMatchResult.range.first) {
         throw ProcessingException(
-          "Could not fully parse media type \"$mediaType\"," +
-              " parsed up to position $mediaTypeEnd.",
+            "Could not fully parse media type \"$mediaType\"," +
+                " parsed up to position $mediaTypeEnd.",
         )
       }
       mediaTypeEnd = mediaTypeMatchResult.range.last + 1
@@ -84,8 +84,8 @@ internal class MediaTypeParser(private val qValueKey: String) {
       val subtype = mediaTypeMatchResult.groups[SUBTYPE]!!.value
       if (type == WILDCARD && subtype != WILDCARD) {
         throw ProcessingException(
-          "Invalid type/subtype combination \"$type/$subtype\" in media" +
-              " type \"$mediaType\", type must be concrete if subtype is concrete."
+            "Invalid type/subtype combination \"$type/$subtype\" in media" +
+                " type \"$mediaType\", type must be concrete if subtype is concrete."
         )
       }
       var qValue: Double? = null
@@ -107,15 +107,15 @@ internal class MediaTypeParser(private val qValueKey: String) {
             qValue = try {
               if (!Q_VALUE_REGEX.matches(value)) {
                 throw ProcessingException(
-                  "Invalid q-value format \"$value\" in media type \"$mediaType\". The " +
-                      "q-value must be between 0 and 1 with at most 3 decimal places.",
+                    "Invalid q-value format \"$value\" in media type \"$mediaType\". The " +
+                        "q-value must be between 0 and 1 with at most 3 decimal places.",
                 )
               }
               value.toDouble()
             } catch (e: NumberFormatException) {
               throw ProcessingException(
-                "Invalid q-value \"$value\" in media type \"$mediaType\"," +
-                    " failed to parse number.", e
+                  "Invalid q-value \"$value\" in media type \"$mediaType\"," +
+                      " failed to parse number.", e
               )
             }
             break
@@ -125,18 +125,18 @@ internal class MediaTypeParser(private val qValueKey: String) {
         parametersMap = mutableMapOf()
       }
       mediaTypes.add(
-        MediaType(
-          type,
-          subtype,
-          parametersMap,
-          qValue
-        )
+          MediaType(
+              type,
+              subtype,
+              parametersMap,
+              qValue
+          )
       )
     }
     if (mediaTypeEnd != mediaType.length) {
       throw ProcessingException(
-        "Could not fully parse media type \"$mediaType\"," +
-            " parsed up to position $mediaTypeEnd.",
+          "Could not fully parse media type \"$mediaType\"," +
+              " parsed up to position $mediaTypeEnd.",
       )
     }
     return mediaTypes.toList()

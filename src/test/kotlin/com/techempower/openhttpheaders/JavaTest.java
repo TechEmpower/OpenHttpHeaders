@@ -1,5 +1,7 @@
 package com.techempower.openhttpheaders;
 
+import java.nio.charset.StandardCharsets;
+
 @SuppressWarnings("unused")
 public class JavaTest {
   static {
@@ -33,5 +35,15 @@ public class JavaTest {
         .build()
         .toHeaderString();
     AcceptHeader.parse("text/xml;charset=utf-8;q=0.5,text/html");
+    AcceptHeader.of(
+        MediaType.of("text", "xml")
+            .addParameter("charset", "utf-8")
+            .quality(0.5)
+    );
+    ContentDispositionHeader.of(DispositionType.ATTACHMENT)
+        .filename("file.txt")
+        .filename("file.txt", StandardCharsets.UTF_8, "en")
+        .addParameter("example", "value")
+        .addParameter("example", "value", StandardCharsets.UTF_8, "en");
   }
 }
