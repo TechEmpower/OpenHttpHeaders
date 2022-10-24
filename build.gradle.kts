@@ -35,12 +35,13 @@ java {
 }
 
 group = "com.techempower"
-version = "0.1-SNAPSHOT"
+version = "0.1"
 
 publishing {
   publications {
     create<MavenPublication>("maven") {
       pom {
+        name.set(rootProject.name)
         description.set("This library provides first-party support to Kotlin and Java for HTTP header parsing and creation.")
         url.set("https://github.com/TechEmpower/OpenHttpHeaders")
         licenses {

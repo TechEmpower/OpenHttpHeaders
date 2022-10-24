@@ -93,3 +93,21 @@ To run all tests, run:
 Note: `cleanTest` is necessary because Gradle may otherwise detect that no
 changes to the tested code have occurred and skip running tests. The above
 guarantees that the tests are run when requested. 
+
+### Publish
+
+Add to `~/.gradle/gradle.properties` (or create if it doesn't already exist):
+
+```properties
+signing.keyId=<redacted>
+# The following will likely be `~/.gnupg/pubring.kbx` or `~/.gnupg/secring.gpg`
+# depending on the file present, but it must be written out as a full path (not
+# using ~)
+signing.secretKeyRingFile=<required>
+signing.gnupg.keyName=<redacted>
+signing.gnupg.passphrase=<redacted>
+openhttpheadersUsername=<redacted>
+openhttpheadersPassword=<redacted>
+```
+
+Note: `signing.keyId` may not be necessary. Should be checked later.
